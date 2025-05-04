@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tỏ tình cực chill</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffe6e6;
+      text-align: center;
+      padding-top: 100px;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #ff4d4d;
+    }
+
+    .buttons {
+      margin-top: 30px;
+      position: relative;
+      width: 400px;
+      height: 200px;
+      margin: 0 auto;
+      border: 2px dashed #ffb3b3;
+      border-radius: 15px;
+      background: #fff0f0;
+      touch-action: none;
+    }
+
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: absolute;
+    }
+
+    #yesBtn {
+      background-color: #4CAF50;
+      color: white;
+      left: 30px;
+      top: 80px;
+      z-index: 1;
+    }
+
+    #noBtn {
+      background-color: #f44336;
+      color: white;
+      left: 250px;
+      top: 80px;
+      z-index: 2;
+      max-width: 100px;
+      white-space: nowrap;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Làm người yêu anh nhé? 💖</h1>
+
+  <div class="buttons">
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <script>
+    // CẢNH BÁO CHO ĐIỆN THOẠI
+    if (window.innerWidth < 500 || /Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+      alert("Trang này có thể không hoạt động tốt trên điện thoại 😢. Vì thế yêu cầu em bé của anh mở trên PC nhá 💻❤️");
+    }
+
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const buttonsDiv = document.querySelector('.buttons');
+
+    let posX = 250;
+    let posY = 80;
+
+    function moveButton(x, y) {
+      const rect = noBtn.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+      const containerRect = buttonsDiv.getBoundingClientRect();
+
+      const distanceX = x - (rect.left + rect.width / 2);
+      const distanceY = y - (rect.top + rect.height / 2);
+      const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+      if (distance < 100) {
+        const moveX = (distanceX / distance) * 30;
+        const moveY = (distanceY / distance) * 30;
+
+        posX += moveX;
+        posY += moveY;
+
+        const maxX = buttonsDiv.clientWidth - noBtn.offsetWidth;
+        const maxY = buttonsDiv.clientHeight - noBtn.offsetHeight;
+        posX = Math.max(0, Math.min(maxX, posX));
+        posY = Math.max(0, Math.min(maxY, posY));
+
+        if (
+          posX + noBtn.offsetWidth > yesBtn.offsetLeft - 10 &&
+          posX < yesBtn.offsetLeft + yesBtn.offsetWidth + 10 &&
+          posY + noBtn.offsetHeight > yesBtn.offsetTop - 10 &&
+          posY < yesBtn.offsetTop + yesBtn.offsetHeight + 10
+        ) {
+          posX = Math.random() * maxX;
+          posY = Math.random() * maxY;
+        }
+
+        noBtn.style.left = posX + "px";
+        noBtn.style.top = posY + "px";
+      }
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      moveButton(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      moveButton(touch.clientX, touch.clientY);
+    });
+
+    noBtn.addEventListener('click', () => {
+      alert("Thôi mà, bấm Yes đi mà 😳💘");
+    });
+
+    yesBtn.addEventListener('click', () => {
+      document.body.innerHTML = `
+        <canvas id="canvas"></canvas>
+        <div style="position: absolute; top: 20%; left: 50%; transform: translateX(-50%); text-align: center; z-index: 1;">
+          <img src="cute.jfif" alt="Cute" style="max-width: 300px; border-radius: 20px; box-shadow: 0 0 20px #f99;" />
+          <h1 style="color: white; text-shadow: 2px 2px 4px #f00; margin-top: 20px;">
+            Yêu anh nhiều nhiều nhéeeee 💘💘💘
+          </h1>
+          <button onclick="window.location.href='tan_gai.mp4'" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; background-color: pink; border: none; border-radius: 10px; cursor: pointer;">
+            Xem video nè 🎥
+          </button>
+        </div>
+      `;
+
+      // Hiệu ứng trái tim
+      const canvas = document.getElementById('canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+
+      const range = n => Array.from(Array(n).keys());
+
+      class Vector {
+        constructor(x = 0, y = 0) { this.x = x; this.y = y; }
+        reflect() { return new Vector(-this.x, -this.y); }
+        add(v) { return new Vector(this.x + v.x, this.y + v.y); }
+        subtract(v) { return new Vector(this.x - v.x, this.y - v.y); }
+        scale(s = 1) { return new Vector(this.x * s, this.y * s); }
+        length() { return Math.sqrt(this.x ** 2 + this.y ** 2); }
+        distance(v) { return this.subtract(v).length(); }
+      }
+
+      class IO {
+        constructor() { this.mouse = new Vector(); this.bindMouse(); }
+        bindMouse() {
+          window.addEventListener('mousemove', ({ x, y }) => {
+            this.mouse.x = x; this.mouse.y = y;
+          });
+        }
+      }
+
+      class Point {
+        constructor({ position = new Vector(), color = '#f00', size = 3 }) {
+          this.position = position; this.color = color; this.size = size;
+        }
+        render(ctx) {
+          ctx.beginPath();
+          ctx.fillStyle = this.color;
+          ctx.arc(this.position.x, this.position.y, this.size, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+
+      class SpringPoint extends Point {
+        constructor({ target = new Vector(), elasticity = 0.1, damping = 0.1, color = 'rgba(255, 0, 0, .6)', size = 3 }) {
+          super({ position: target, color, size });
+          this.velocity = new Vector();
+          this.target = target;
+          this.elasticity = elasticity;
+          this.damping = damping;
+        }
+        updateVelocity() {
+          const damping = this.velocity.scale(this.damping);
+          const force = this.target.subtract(this.position).scale(this.elasticity).subtract(damping);
+          this.velocity = this.velocity.add(force);
+        }
+        updatePosition() {
+          this.position = this.position.add(this.velocity);
+        }
+        update() {
+          this.updateVelocity();
+          this.updatePosition();
+        }
+      }
+
+      class SpringTrail extends SpringPoint {
+        constructor(config) {
+          super(config);
+          this.trail = range(config.trailSize || 10).map(index => {
+            return new SpringPoint({
+              target: this.position,
+              elasticity: 1 / (index * 8),
+              damping: 8 / (index * 10 + 5),
+              color: config.color,
+              size: config.size
+            });
+          });
+        }
+        update() {
+          super.update();
+          this.trail.forEach(p => p.update());
+        }
+        render(ctx) {
+          super.render(ctx);
+          this.trail.forEach(p => p.render(ctx));
+        }
+      }
+
+      class Physics {
+        update(objects) { objects.forEach(o => o.update()); }
+      }
+
+      class Renderer {
+        constructor(ctx, size) { this.ctx = ctx; this.size = size; }
+        render(objects) { objects.forEach(o => o.render(this.ctx)); }
+        clear() {
+          this.ctx.fillStyle = 'rgba(20, 20, 20, .2)';
+          this.ctx.fillRect(0, 0, this.size.width, this.size.height);
+        }
+      }
+
+      class Engine {
+        constructor(physics, renderer, objects = []) {
+          this.physics = physics;
+          this.renderer = renderer;
+          this.objects = objects;
+        }
+        add(...objects) { this.objects = this.objects.concat(objects); }
+        tick() { this.physics.update(this.objects); }
+        render() { this.renderer.render(this.objects); }
+        clear() { this.renderer.clear(); }
+      }
+
+      const io = new IO();
+      const engine = new Engine(new Physics(), new Renderer(ctx, { width: canvas.width, height: canvas.height }));
+
+      const origin = new Vector(canvas.width / 2, canvas.height / 2);
+      const polar = (rad, time) => {
+        rad += Math.sin(time / 100);
+        const x = 16 * Math.sin(rad) ** 3;
+        const y = 13 * Math.cos(rad) - 5 * Math.cos(2 * rad) - 2 * Math.cos(3 * rad) - Math.cos(4 * rad);
+        const scale = (Math.sin(time / 10) + 3) * 4;
+        return new Vector(x * scale, -y * scale)
+          .add(origin.add(io.mouse.subtract(origin).scale(0.5)));
+      };
+
+      const random = (min = 0, max = 1) => Math.random() * (max - min) + min;
+      const targetsSize = 60;
+      const targets = [];
+
+      for (let i = 0; i < targetsSize; i++) {
+        const target = new Vector(random(0, canvas.width), random(0, canvas.height));
+        engine.add(new SpringTrail({ target, size: 1.3, trailSize: 10, color: "rgba(230, 10, 40, 0.8)" }));
+        targets.push(target);
+      }
+
+      let time = 0;
+      (function animate() {
+        time++;
+        engine.clear();
+        engine.tick();
+        engine.render();
+        updateTargets();
+        requestAnimationFrame(animate);
+      })();
+
+      function updateTargets() {
+        for (let i = 0; i < targetsSize; i++) {
+          const lerp = i / (targetsSize - 1) * Math.PI * 2 + random() / 10;
+          const result = polar(lerp, time);
+          targets[i].x = result.x;
+          targets[i].y = result.y;
+
+          if (random() < 0.004) {
+            const rnd1 = Math.floor(random(0, targets.length));
+            const rnd2 = Math.floor(random(0, targets.length));
+            [targets[rnd1], targets[rnd2]] = [targets[rnd2], targets[rnd1]];
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
